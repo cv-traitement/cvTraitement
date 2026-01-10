@@ -19,6 +19,7 @@ public class ContactUs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String Name;
     private String email;
     private String message;
     private String phone;
