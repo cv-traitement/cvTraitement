@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,21 +37,15 @@ public class Secuirtyconfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    @Bean InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        return new InMemoryUserDetailsManager(
-                User.withUsername("admin").password(encoder.encode("12345")).roles("ADMIN").build(),
-                User.withUsername("user").password(encoder.encode("12345")).roles("USER").build()
-        );
-    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .sessionManagement(sm ->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(csrf->csrf.disable())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth->auth.requestMatchers("/login/auth/**").permitAll())
-                .authorizeHttpRequests(auth->auth.anyRequest().permitAll())
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests.requestMatchers("/auth/login").permitAll())
+                .authorizeHttpRequests(auth->auth.anyRequest().authenticated())
                 .oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
                 .build();
     }
@@ -64,9 +59,10 @@ public class Secuirtyconfig {
     JwtEncoder JwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(secret.getBytes()));
     }
+
     @Bean
     JwtDecoder JwtDecoder() {
-        SecretKeySpec key = new SecretKeySpec(secret.getBytes(), "RSA");
+        SecretKeySpec key = new SecretKeySpec(secret.getBytes(), "HmacSHA512");
         return NimbusJwtDecoder.withSecretKey(key).macAlgorithm(MacAlgorithm.HS512).build();
     }
 }

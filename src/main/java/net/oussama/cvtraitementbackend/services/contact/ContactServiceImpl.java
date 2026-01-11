@@ -8,6 +8,8 @@ import net.oussama.cvtraitementbackend.mappers.Dtomappers;
 import net.oussama.cvtraitementbackend.repositroy.ContactRepositroy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 @Transactional
@@ -19,5 +21,13 @@ public class ContactServiceImpl implements ContactServices{
       ContactUs contactUs = dtomappers.convertDtocontactToContactUs(dtocontact);
       ContactUs contactUs1 = contactRepositroy.save(contactUs);
       return dtomappers.convertContactToDtocontact(contactUs1);
+    }
+    @Override
+    public List<Dtocontact> getAllcontacts(){
+        List<ContactUs> listcontact = contactRepositroy.findAll();
+        List<Dtocontact> dtocontacts=listcontact.stream().map(
+                contact->dtomappers.convertContactToDtocontact(contact)
+        ).toList();
+        return dtocontacts;
     }
 }

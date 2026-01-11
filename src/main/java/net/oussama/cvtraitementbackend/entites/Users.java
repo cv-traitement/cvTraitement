@@ -18,8 +18,11 @@ public class Users {
     private String username;
     private String email;
     private String password;
+    @Column(nullable = true)
     private Date creationDate;
+    @Column(nullable = true)
     private Date modificationDate;
+    @Column(nullable = true)
     private Date deletionDate;
     private AccountState active;
     @ManyToOne

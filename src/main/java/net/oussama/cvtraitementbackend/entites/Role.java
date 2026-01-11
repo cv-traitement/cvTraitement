@@ -18,8 +18,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private RoleUsers name;
+    @Column(nullable = true)
     private Date creationDate;
+    @Column(nullable = true)
     private Date modificationDate;
+    @Column(nullable = true)
     private Date deletionDate;
     @OneToMany(mappedBy = "role")
     private List<Users> users;

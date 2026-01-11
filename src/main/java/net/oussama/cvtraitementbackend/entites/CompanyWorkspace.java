@@ -21,6 +21,6 @@ public class CompanyWorkspace {
     private List<Departement>  departement;
     @OneToMany(mappedBy = "companyWorkspace")
     private List<Candidature> candidature;
-    @OneToOne
+    @OneToOne(mappedBy = "companyWorkspace")
     private Licence licence;
 }
